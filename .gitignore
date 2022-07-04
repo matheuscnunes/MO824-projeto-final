@@ -1,6 +1,18 @@
 # Compiled class file
 *.class
 
+### IntelliJ IDEA ###
+.idea/**
+!.idea/codeStyles/*
+*.iws
+*.iml
+*.ipr
+
+#Gradlew
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+
 # Log file
 *.log
 
