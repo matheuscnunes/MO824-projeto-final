@@ -4,14 +4,15 @@ import grasp.framework.AbstractGRASP;
 import grasp.framework.Solution;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 
 public class RideSharingGRASP extends AbstractGRASP<Integer> {
 
     private final RideSharingEvaluator rideSharingEvaluator;
 
-    public RideSharingGRASP(Double alpha, Integer iterations, Long maxTimeInSeconds, RideSharingEvaluator rideSharingEvaluator) throws IOException {
-        super(rideSharingEvaluator, alpha, iterations, maxTimeInSeconds);
+    public RideSharingGRASP(Double alpha, Integer iterations, Duration maxExecutionTime, RideSharingEvaluator rideSharingEvaluator) throws IOException {
+        super(rideSharingEvaluator, alpha, iterations, maxExecutionTime);
         this.rideSharingEvaluator = rideSharingEvaluator;
     }
 

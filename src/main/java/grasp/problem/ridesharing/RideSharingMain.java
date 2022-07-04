@@ -6,15 +6,24 @@ import java.io.IOException;
 import java.time.Duration;
 
 public class RideSharingMain {
-    public static final Long MAX_EXECUTION_TIME = Duration.ofMinutes(5).getSeconds();
 
     public static void main(String[] args) throws IOException {
-        RideSharingEvaluator evaluator = new RideSharingEvaluator("");
-        RideSharingGRASP rideSharingGRASP = new RideSharingGRASP(0.25, 100, MAX_EXECUTION_TIME, evaluator);
-
+        Duration maxExecutionTime = Duration.ofMinutes(5);
         AbstractGRASP.ConstructiveMethod constructiveMethod = AbstractGRASP.ConstructiveMethod.STANDARD;
+        String instance = "instances/in/P-n16-k8.vrp";
+        double alpha = 0.25;
+        int iterations = 100;
 
+        System.out.println("------ Running RideSharingGRASP ------" +
+                "\ninstance = " + instance +
+                "\nconstructiveMethod = " + constructiveMethod +
+                "\nmaxExecutionTime = " + maxExecutionTime +
+                "\nalpha = " + alpha +
+                "\niterations = " + iterations);
+
+        RideSharingEvaluator evaluator = new RideSharingEvaluator(instance);
+        RideSharingGRASP rideSharingGRASP = new RideSharingGRASP(alpha, iterations, maxExecutionTime, evaluator);
         // TODO: Not working yet
-        // rideSharingGRASP.solve(constructiveMethod);
+        rideSharingGRASP.solve(constructiveMethod);
     }
 }

@@ -3,6 +3,7 @@
  */
 package grasp.framework;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,7 +88,7 @@ public abstract class AbstractGRASP<E> {
 	/**
 	 * the max time to run the solver in seconds
 	 */
-	protected Long maxTimeInSeconds;
+	protected Duration maxExecutionTime;
 
 	/**
 	 * Creates the Candidate List, which is an ArrayList of candidate elements
@@ -142,11 +143,11 @@ public abstract class AbstractGRASP<E> {
 	 * @param iterations
 	 *            The number of iterations which the GRASP will be executed.
 	 */
-	public AbstractGRASP(Evaluator<E> objFunction, Double usedAlpha, Integer iterations, Long maxTimeInSeconds) {
+	public AbstractGRASP(Evaluator<E> objFunction, Double usedAlpha, Integer iterations, Duration maxExecutionTime) {
 		this.ObjFunction = objFunction;
 		this.usedAlpha = usedAlpha;
 		this.iterations = iterations;
-		this.maxTimeInSeconds = maxTimeInSeconds;
+		this.maxExecutionTime = maxExecutionTime;
 	}
 	
 	/**
@@ -331,8 +332,9 @@ public abstract class AbstractGRASP<E> {
 				if (verbose)
 					System.out.println("(Iter. " + i + ") BestSol = " + bestSol);
 			}
-			if (Instant.now().getEpochSecond() > started.plusSeconds(maxTimeInSeconds).getEpochSecond()) {
-				System.out.println("Interrupting");
+
+			if (Instant.now().isAfter(started.plus(maxExecutionTime))) {
+				System.out.println("Interrupting - Max execution time exceeded.");
 				break;
 			}
 		}
@@ -349,7 +351,7 @@ public abstract class AbstractGRASP<E> {
 	 * @return true if the criteria is met.
 	 */
 	public Boolean constructiveStopCriteria() {
-		return (cost > sol.cost) ? false : true;
+		return cost <= sol.cost;
 	}
 
 	public enum ConstructiveMethod {
