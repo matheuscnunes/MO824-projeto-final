@@ -8,32 +8,44 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class RideSharingEvaluator  implements Evaluator<Integer> {
     private static final int METADATA_HEADER_OFFSET = 7;
     private static final int DIMENSION_OFFSET = 12;
     private static final int CAPACITY_OFFSET = 11;
 
+    /**
+     * Problem generic variables
+     */
     public Integer domainSize;
-    public final Double[] variables;
+    public final List<List<Integer>> driverServingRidersVariable;
 
+    /**
+     * Riders related variables
+     */
+    public int riders;
     public final List<NodeCoord> ridersOriginCoords = new ArrayList<>();
     public final List<NodeCoord> ridersDestinationCoords = new ArrayList<>();
 
+
+    /**
+     * Drivers related variables
+     */
+    public int drivers;
     public final List<NodeCoord> driversOriginCoords = new ArrayList<>();
     public final List<NodeCoord> driversDestinationCoords = new ArrayList<>();
-
-    public int drivers;
-    public int riders;
-    public int maxRequestsPerDriver;
+    public final List<Integer> driversCapacityLeft = new ArrayList<>();
+    public final List<Integer> driversRequestsLeft = new ArrayList<>();
+    public int maxRequests;
     public int maxDrivingTime;
-    public int capacity;
+    public int maxCapacity;
 
     public RideSharingEvaluator(Instance instance) {
+        driverServingRidersVariable = new ArrayList<>();
         readInput(instance);
-        variables = new Double[domainSize];
-        Arrays.fill(variables, 0.0);
     }
 
     @Override
@@ -66,7 +78,7 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
             List<String> allLines = Files.readAllLines(Paths.get(instance.getFilename()));
 
             domainSize = getDomainSize(allLines);
-            capacity = 4;
+            maxCapacity = 4;
 
             List<NodeCoord> allCoords = new ArrayList<>();
 
@@ -91,11 +103,13 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
             System.out.println("Riders Destination Coords: " + ridersDestinationCoords);
 
             System.out.println("Drivers: " + drivers);
-            System.out.println("Capacity: " + capacity);
+            System.out.println("Max Capacity: " + maxCapacity);
             System.out.println("Max Driving Time: " + maxDrivingTime);
-            System.out.println("Max Requests Per Driver: " + maxRequestsPerDriver);
+            System.out.println("Max Requests Per Driver: " + maxRequests);
             System.out.println("Drivers Origin Coords: " + driversOriginCoords);
             System.out.println("Drivers Destination Coords: " + driversDestinationCoords);
+            System.out.println("Drivers Capacity Left: " + driversCapacityLeft);
+            System.out.println("Drivers Requests Left: " + driversRequestsLeft);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -103,10 +117,16 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
 
     private void read16(List<NodeCoord> allCoords) {
         drivers = 3;
-        maxRequestsPerDriver = 4;
+        maxRequests = 4;
         riders = 5;
         maxDrivingTime = 110;
         loadDriverAndRiderCoordsFor16(allCoords);
+
+        IntStream.range(0, drivers).forEach(ign -> {
+            driversCapacityLeft.add(maxCapacity);
+            driversRequestsLeft.add(maxRequests);
+            driverServingRidersVariable.add(Collections.nCopies(riders, 0)); // Drivers start not serving any riders
+        });
     }
 
     private void loadDriverAndRiderCoordsFor16(List<NodeCoord> allCoords) {
