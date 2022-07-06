@@ -10,7 +10,7 @@ public class RideSharingMain {
     public static void main(String[] args) throws IOException {
         Duration maxExecutionTime = Duration.ofMinutes(5);
         AbstractGRASP.ConstructiveMethod constructiveMethod = AbstractGRASP.ConstructiveMethod.STANDARD;
-        String instance = "instances/in/P-n16-k8.vrp";
+        Instance instance = Instance.P_N16;
         double alpha = 0.25;
         int iterations = 100;
 
@@ -24,6 +24,6 @@ public class RideSharingMain {
         RideSharingEvaluator evaluator = new RideSharingEvaluator(instance);
         RideSharingGRASP rideSharingGRASP = new RideSharingGRASP(alpha, iterations, maxExecutionTime, evaluator);
         // TODO: Not working yet
-        rideSharingGRASP.solve(constructiveMethod);
+//        rideSharingGRASP.solve(constructiveMethod);
     }
 }
