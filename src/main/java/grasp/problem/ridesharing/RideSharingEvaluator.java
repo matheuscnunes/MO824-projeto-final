@@ -76,9 +76,6 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
         try {
             List<String> allLines = Files.readAllLines(Paths.get(instance.getFilename()));
 
-            domainSize = getDomainSize(allLines);
-            maxCapacity = 4;
-
             List<NodeCoord> allCoords = new ArrayList<>();
 
             for (int i = METADATA_HEADER_OFFSET; i < METADATA_HEADER_OFFSET + domainSize; i++) {
@@ -116,9 +113,12 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
 
     private void read16(List<NodeCoord> allCoords) {
         drivers = 3;
-        maxRequests = 4;
         riders = 5;
+        maxCapacity = 4;
+        maxRequests = 4;
         maxDrivingTime = 110;
+
+        domainSize = drivers * riders;
         loadDriverAndRiderCoordsFor16(allCoords);
 
         IntStream.range(0, drivers).forEach(ign -> {

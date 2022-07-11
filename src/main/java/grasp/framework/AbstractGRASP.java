@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -38,7 +39,7 @@ public abstract class AbstractGRASP<E> {
 	/**
 	 * the objective function being optimized
 	 */
-	protected Evaluator<E> ObjFunction;
+	protected Evaluator<E> evaluator;
 
 	/**
 	 * the GRASP greediness-randomness parameter
@@ -78,7 +79,7 @@ public abstract class AbstractGRASP<E> {
 	/**
 	 * the Candidate List of elements to enter the solution.
 	 */
-	protected ArrayList<E> CL;
+	protected List<E> CL;
 
 	/**
 	 * the Restricted Candidate List of elements to enter the solution.
@@ -96,7 +97,7 @@ public abstract class AbstractGRASP<E> {
 	 * 
 	 * @return The Candidate List.
 	 */
-	public abstract ArrayList<E> makeCL();
+	public abstract List<E> makeCL();
 
 	/**
 	 * Creates the Restricted Candidate List, which is an ArrayList of the best
@@ -135,7 +136,7 @@ public abstract class AbstractGRASP<E> {
 	/**
 	 * Constructor for the AbstractGRASP class.
 	 * 
-	 * @param objFunction
+	 * @param evaluator
 	 *            The objective function being minimized.
 	 * @param usedAlpha
 	 *            The GRASP greediness-randomness parameter (within the range
@@ -143,8 +144,8 @@ public abstract class AbstractGRASP<E> {
 	 * @param iterations
 	 *            The number of iterations which the GRASP will be executed.
 	 */
-	public AbstractGRASP(Evaluator<E> objFunction, Double usedAlpha, Integer iterations, Duration maxExecutionTime) {
-		this.ObjFunction = objFunction;
+	public AbstractGRASP(Evaluator<E> evaluator, Double usedAlpha, Integer iterations, Duration maxExecutionTime) {
+		this.evaluator = evaluator;
 		this.usedAlpha = usedAlpha;
 		this.iterations = iterations;
 		this.maxExecutionTime = maxExecutionTime;
@@ -194,7 +195,6 @@ public abstract class AbstractGRASP<E> {
 
 	private Solution<E> randomPlusGreedyConstructiveHeuristic(String... args) {
 		Integer p = Integer.parseInt(args[0]);
-		Integer iteration = Integer.parseInt(args[1]);
 		CL = makeCL();
 		RCL = makeRCL();
 		sol = createEmptySol();
@@ -207,7 +207,7 @@ public abstract class AbstractGRASP<E> {
 		while (!constructiveStopCriteria()) {
 
 			double maxCost = Double.NEGATIVE_INFINITY, minCost = Double.POSITIVE_INFINITY;
-			cost = ObjFunction.evaluate(sol);
+			cost = evaluator.evaluate(sol);
 			updateCL();
 
 			/*
@@ -215,7 +215,7 @@ public abstract class AbstractGRASP<E> {
 			 * highest and lowest cost variation achieved by the candidates.
 			 */
 			for (E c : CL) {
-				Double deltaCost = ObjFunction.evaluateInsertionCost(c, sol);
+				Double deltaCost = evaluator.evaluateInsertionCost(c, sol);
 				if (deltaCost < minCost)
 					minCost = deltaCost;
 				if (deltaCost > maxCost)
@@ -227,7 +227,7 @@ public abstract class AbstractGRASP<E> {
 			 * performance using parameter alpha as threshold.
 			 */
 			for (E c : CL) {
-				Double deltaCost = ObjFunction.evaluateInsertionCost(c, sol);
+				Double deltaCost = evaluator.evaluateInsertionCost(c, sol);
 				if (deltaCost <= minCost + (i > p ? 0 : usedAlpha) * (maxCost - minCost)) {
 					RCL.add(c);
 				}
@@ -239,7 +239,7 @@ public abstract class AbstractGRASP<E> {
 				E inCand = RCL.get(rndIndex);
 				CL.remove(inCand);
 				sol.add(inCand);
-				ObjFunction.evaluate(sol);
+				evaluator.evaluate(sol);
 				RCL.clear();
 			}
 			i++;
@@ -261,7 +261,7 @@ public abstract class AbstractGRASP<E> {
 		while (!constructiveStopCriteria()) {
 
 			double maxCost = Double.NEGATIVE_INFINITY, minCost = Double.POSITIVE_INFINITY;
-			cost = ObjFunction.evaluate(sol);
+			cost = evaluator.evaluate(sol);
 			updateCL();
 
 			/*
@@ -269,7 +269,7 @@ public abstract class AbstractGRASP<E> {
 			 * highest and lowest cost variation achieved by the candidates.
 			 */
 			for (E c : CL) {
-				Double deltaCost = ObjFunction.evaluateInsertionCost(c, sol);
+				Double deltaCost = evaluator.evaluateInsertionCost(c, sol);
 				if (deltaCost < minCost)
 					minCost = deltaCost;
 				if (deltaCost > maxCost)
@@ -281,7 +281,7 @@ public abstract class AbstractGRASP<E> {
 			 * performance using parameter alpha as threshold.
 			 */
 			for (E c : CL) {
-				Double deltaCost = ObjFunction.evaluateInsertionCost(c, sol);
+				Double deltaCost = evaluator.evaluateInsertionCost(c, sol);
 				if (deltaCost <= minCost + usedAlpha * (maxCost - minCost)) {
 					RCL.add(c);
 				}
@@ -293,7 +293,7 @@ public abstract class AbstractGRASP<E> {
 				E inCand = RCL.get(rndIndex);
 				CL.remove(inCand);
 				sol.add(inCand);
-				ObjFunction.evaluate(sol);
+				evaluator.evaluate(sol);
 				RCL.clear();
 			}
 		}

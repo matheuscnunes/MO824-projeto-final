@@ -6,6 +6,9 @@ import grasp.framework.Solution;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class RideSharingGRASP extends AbstractGRASP<Integer> {
 
@@ -17,23 +20,25 @@ public class RideSharingGRASP extends AbstractGRASP<Integer> {
     }
 
     @Override
-    public ArrayList<Integer> makeCL() {
-        return null;
+    public List<Integer> makeCL() {
+        return IntStream.range(0, rideSharingEvaluator.getDomainSize()).boxed().collect(Collectors.toList());
     }
 
     @Override
     public ArrayList<Integer> makeRCL() {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public void updateCL() {
-
+        // TODO
+        // Check if any rider was added and remove it from other drivers
     }
 
     @Override
     public Solution<Integer> createEmptySol() {
-        return null;
+        // Create empty solution, no riders are served.
+        return new Solution<>(IntStream.range(0, rideSharingEvaluator.getDomainSize()).boxed().collect(Collectors.toList()));
     }
 
     @Override

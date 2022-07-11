@@ -1,6 +1,7 @@
 package grasp.framework;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 @SuppressWarnings("serial")
 public class Solution<E> extends ArrayList<E> {
@@ -11,7 +12,11 @@ public class Solution<E> extends ArrayList<E> {
 	public Solution() {
 		super();
 	}
-	
+
+	public Solution(Collection<? extends E> c) {
+		super(c);
+	}
+
 	public Solution(Solution<E> sol) {
 		super(sol);
 		cost = sol.cost;
