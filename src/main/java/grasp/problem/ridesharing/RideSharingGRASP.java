@@ -6,7 +6,7 @@ import grasp.framework.Solution;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -20,8 +20,8 @@ public class RideSharingGRASP extends AbstractGRASP<Integer> {
     }
 
     @Override
-    public List<Integer> makeCL() {
-        return IntStream.range(0, rideSharingEvaluator.getDomainSize()).boxed().collect(Collectors.toList());
+    public Set<Integer> makeCL() {
+        return IntStream.range(0, rideSharingEvaluator.getDomainSize()).boxed().collect(Collectors.toSet());
     }
 
     @Override
@@ -31,18 +31,28 @@ public class RideSharingGRASP extends AbstractGRASP<Integer> {
 
     @Override
     public void updateCL() {
-        // TODO
-        // Check if any rider was added and remove it from other drivers
+        Set<Integer> candidates = makeCL();
+        for (Integer solCandidate : sol) {
+            int rider = solCandidate % rideSharingEvaluator.riders;
+            int allCandidatesSize = candidates.size();
+            for (int r = rider; r < allCandidatesSize; r = r + rideSharingEvaluator.riders) {
+                candidates.remove(r);
+            }
+        }
+
+        CL = candidates;
     }
 
     @Override
     public Solution<Integer> createEmptySol() {
-        // Create empty solution, no riders are served.
-        return new Solution<>(IntStream.range(0, rideSharingEvaluator.getDomainSize()).boxed().collect(Collectors.toList()));
+        // Create empty solution, no riders are served and penalty is added.
+        Solution<Integer> emptySolution = new Solution<>();
+        emptySolution.cost = rideSharingEvaluator.penalty * rideSharingEvaluator.riders;
+        return emptySolution;
     }
 
     @Override
     public Solution<Integer> localSearch() {
-        return null;
+        return sol;
     }
 }

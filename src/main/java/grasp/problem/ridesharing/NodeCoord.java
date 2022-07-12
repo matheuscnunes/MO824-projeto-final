@@ -13,4 +13,8 @@ public class NodeCoord {
     public String toString() {
         return "{" + x + ", " + y + "}";
     }
+
+    public long getDistanceFrom(NodeCoord destination) {
+        return Math.round(Math.sqrt(Math.pow(this.x - destination.x, 2) + Math.pow(this.y - destination.y, 2)));
+    }
 }

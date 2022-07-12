@@ -5,10 +5,7 @@ package grasp.framework;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Abstract class for metaheuristic GRASP (Greedy Randomized Adaptive Search
@@ -79,7 +76,7 @@ public abstract class AbstractGRASP<E> {
 	/**
 	 * the Candidate List of elements to enter the solution.
 	 */
-	protected List<E> CL;
+	protected Set<E> CL;
 
 	/**
 	 * the Restricted Candidate List of elements to enter the solution.
@@ -92,12 +89,12 @@ public abstract class AbstractGRASP<E> {
 	protected Duration maxExecutionTime;
 
 	/**
-	 * Creates the Candidate List, which is an ArrayList of candidate elements
+	 * Creates the Candidate List, which is an Set of candidate elements
 	 * that can enter a solution.
 	 * 
 	 * @return The Candidate List.
 	 */
-	public abstract List<E> makeCL();
+	public abstract Set<E> makeCL();
 
 	/**
 	 * Creates the Restricted Candidate List, which is an ArrayList of the best
@@ -338,7 +335,6 @@ public abstract class AbstractGRASP<E> {
 				break;
 			}
 		}
-		System.out.println(Arrays.toString(alphas));
 
 		return bestSol;
 	}

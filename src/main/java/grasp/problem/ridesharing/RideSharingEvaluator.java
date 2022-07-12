@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 public class RideSharingEvaluator  implements Evaluator<Integer> {
@@ -41,6 +42,7 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
     public int maxRequests;
     public int maxDrivingTime;
     public int maxCapacity;
+    public double penalty;
 
     public RideSharingEvaluator(Instance instance) {
         driverServingRidersVariable = new ArrayList<>();
@@ -54,22 +56,74 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
 
     @Override
     public Double evaluate(Solution<Integer> sol) {
-        return 1.0;
+        int penaltiesNeeded = riders - sol.size();
+        double penaltyCost = penaltiesNeeded * penalty;
+        List<List<Integer>> driversDecisionVariables = new ArrayList<>();
+        IntStream.range(0, drivers).forEach(ign -> {
+            driversDecisionVariables.add(new ArrayList<>(Collections.nCopies(riders, 0))); // Drivers start not serving any riders
+        });
+
+        int rideCosts = 0;
+        for (Integer item : sol) {
+            int rider = item % riders;
+            int driver = item / riders;
+            driversDecisionVariables.get(driver).set(rider, 1);
+        }
+
+        List<List<NodeCoord>> allRoutes = new ArrayList<>();
+        for (int i = 0; i < driversDecisionVariables.size(); i++) {
+            List<Integer> driverRiders = driversDecisionVariables.get(i);
+            List<NodeCoord> driverRoute = new ArrayList<>();
+            List<NodeCoord> driverRouteDestinations = new ArrayList<>();
+
+            driverRoute.add(driversOriginCoords.get(i));
+            for (int j = 0; j < driverRiders.size(); j++) {
+                if (driverRiders.get(j) > 0) {
+                    driverRoute.add(ridersOriginCoords.get(j));
+                    driverRouteDestinations.add(ridersDestinationCoords.get(j));
+                }
+            }
+
+            driverRoute.addAll(driverRouteDestinations);
+            driverRoute.add(driversDestinationCoords.get(i));
+            allRoutes.add(driverRoute);
+        }
+
+        for (List<NodeCoord> route : allRoutes) {
+            for (int i = 0; i < route.size() - 1; i++) {
+                NodeCoord currentOrigin = route.get(i);
+                NodeCoord currentDestination = route.get(i+1);
+
+                rideCosts += currentOrigin.getDistanceFrom(currentDestination);
+            }
+        }
+
+        return rideCosts + penaltyCost;
     }
 
     @Override
     public Double evaluateInsertionCost(Integer elem, Solution<Integer> sol) {
-        return 1.0;
+        Solution<Integer> newSol = new Solution<>(sol);
+        newSol.add(elem);
+
+        return evaluate(newSol);
     }
 
     @Override
     public Double evaluateRemovalCost(Integer elem, Solution<Integer> sol) {
-        return 1.0;
+        Solution<Integer> newSol = new Solution<>(sol);
+        newSol.remove(elem);
+
+        return evaluate(newSol);
     }
 
     @Override
     public Double evaluateExchangeCost(Integer elemIn, Integer elemOut, Solution<Integer> sol) {
-        return 1.0;
+        Solution<Integer> newSol = new Solution<>(sol);
+        newSol.remove(elemOut);
+        newSol.add(elemIn);
+
+        return evaluate(newSol);
     }
 
     private void readInput(Instance instance) {
@@ -94,6 +148,7 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
             }
 
             System.out.println("domainSize: " + domainSize);
+            System.out.println("penalty: " + penalty);
             System.out.println("Coords: " + allCoords);
             System.out.println("Riders: " + riders);
             System.out.println("Riders Origin Coords: " + ridersOriginCoords);
@@ -118,6 +173,7 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
         maxCapacity = 4;
         maxRequests = 4;
         maxDrivingTime = 110;
+        penalty = 100.0;
 
         domainSize = drivers * riders;
         loadDriverAndRiderCoordsFor16(allCoords);
@@ -125,7 +181,7 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
         IntStream.range(0, drivers).forEach(ign -> {
             driversCapacityLeft.add(maxCapacity);
             driversRequestsLeft.add(maxRequests);
-            driverServingRidersVariable.add(Collections.nCopies(riders, 0)); // Drivers start not serving any riders
+            driverServingRidersVariable.add(new ArrayList<>(Collections.nCopies(riders, 0))); // Drivers start not serving any riders
         });
     }
 

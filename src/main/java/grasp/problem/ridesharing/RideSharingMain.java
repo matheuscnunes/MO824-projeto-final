@@ -1,6 +1,7 @@
 package grasp.problem.ridesharing;
 
 import grasp.framework.AbstractGRASP;
+import grasp.framework.Solution;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -23,7 +24,8 @@ public class RideSharingMain {
 
         RideSharingEvaluator evaluator = new RideSharingEvaluator(instance);
         RideSharingGRASP rideSharingGRASP = new RideSharingGRASP(alpha, iterations, maxExecutionTime, evaluator);
-        // TODO: Not working yet
-//        rideSharingGRASP.solve(constructiveMethod);
+
+        Solution<Integer> solution = rideSharingGRASP.solve(constructiveMethod);
+        System.out.println("Found solution: " + solution);
     }
 }
