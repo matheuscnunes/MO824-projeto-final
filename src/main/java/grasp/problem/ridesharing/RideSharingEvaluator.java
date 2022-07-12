@@ -77,8 +77,9 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
             List<String> allLines = Files.readAllLines(Paths.get(instance.getFilename()));
 
             List<NodeCoord> allCoords = new ArrayList<>();
+            Integer dimension = getDimensionSize(allLines);
 
-            for (int i = METADATA_HEADER_OFFSET; i < METADATA_HEADER_OFFSET + domainSize; i++) {
+            for (int i = METADATA_HEADER_OFFSET; i < METADATA_HEADER_OFFSET + dimension; i++) {
                 String[] values = allLines.get(i).split("\\s");
                 allCoords.add(new NodeCoord(values));
             }
@@ -150,7 +151,7 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
         driversDestinationCoords.add(allCoords.get(5));
     }
 
-    private int getDomainSize(List<String> allLines) {
+    private int getDimensionSize(List<String> allLines) {
         return Integer.parseInt(allLines.get(3).substring(DIMENSION_OFFSET));
     }
 
