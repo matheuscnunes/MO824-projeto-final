@@ -128,7 +128,7 @@ public abstract class AbstractGRASP<E> {
 	 * 
 	 * @return An local optimum solution.
 	 */
-	public abstract Solution<E> localSearch();
+	public abstract Solution<E> localSearch(LocalSearchMethod localSearchMethod);
 
 	/**
 	 * Constructor for the AbstractGRASP class.
@@ -305,7 +305,7 @@ public abstract class AbstractGRASP<E> {
 	 * 
 	 * @return The best feasible solution obtained throughout all iterations.
 	 */
-	public Solution<E> solve(ConstructiveMethod constructiveMethod, String... args) {
+	public Solution<E> solve(ConstructiveMethod constructiveMethod, LocalSearchMethod localSearchMethod, String... args) {
 		Instant started = Instant.now();
 		bestSol = createEmptySol();
 		alphas = getAlphasForBestReactive();
@@ -314,7 +314,7 @@ public abstract class AbstractGRASP<E> {
 				args[1] = String.valueOf(i);
 			}
 			constructiveHeuristic(constructiveMethod, args);
-			localSearch();
+			localSearch(localSearchMethod);
 
 			if (bestSol.cost > sol.cost) {
 				bestSol = new Solution<E>(sol);
@@ -352,6 +352,10 @@ public abstract class AbstractGRASP<E> {
 
 	public enum ConstructiveMethod {
 		STANDARD, RANDOM_PLUS_GREEDY, RANDOM_REACTIVE_GRASP, BEST_ALPHA_REACTIVE_GRASP
+	}
+
+    public enum LocalSearchMethod {
+		FIRST_IMPROVING, BEST_IMPROVING
 	}
 
 }

@@ -10,10 +10,12 @@ public class RideSharingMain {
 
     public static void main(String[] args) throws IOException {
         Duration maxExecutionTime = Duration.ofMinutes(5);
-        AbstractGRASP.ConstructiveMethod constructiveMethod = AbstractGRASP.ConstructiveMethod.STANDARD;
         Instance instance = Instance.P_N16;
         double alpha = 0.25;
         int iterations = 100;
+        
+        AbstractGRASP.ConstructiveMethod constructiveMethod = AbstractGRASP.ConstructiveMethod.STANDARD;
+        AbstractGRASP.LocalSearchMethod localSearchMethod = AbstractGRASP.LocalSearchMethod.FIRST_IMPROVING;
 
         System.out.println("------ Running RideSharingGRASP ------" +
                 "\ninstance = " + instance +
@@ -25,7 +27,7 @@ public class RideSharingMain {
         RideSharingEvaluator evaluator = new RideSharingEvaluator(instance);
         RideSharingGRASP rideSharingGRASP = new RideSharingGRASP(alpha, iterations, maxExecutionTime, evaluator);
 
-        Solution<Integer> solution = rideSharingGRASP.solve(constructiveMethod);
+        Solution<Integer> solution = rideSharingGRASP.solve(constructiveMethod, localSearchMethod);
         System.out.println("Found solution: " + solution);
     }
 }
