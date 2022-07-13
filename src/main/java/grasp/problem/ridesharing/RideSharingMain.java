@@ -11,7 +11,7 @@ public class RideSharingMain {
 
     public static void main(String[] args) throws IOException {
         Duration maxExecutionTime = Duration.ofMinutes(5);
-        Instance instance = Instance.P_N16;
+        Instance instance = Instance.A_N32;
         double alpha = 0.40;
         int iterations = 100;
         
