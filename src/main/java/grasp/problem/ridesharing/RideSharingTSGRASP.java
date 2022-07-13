@@ -1,21 +1,24 @@
 package grasp.problem.ridesharing;
 
-import grasp.framework.AbstractGRASP;
+import grasp.framework.AbstractTSGRASP;
 import grasp.framework.Solution;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class RideSharingGRASP extends AbstractGRASP<Integer> {
+public class RideSharingTSGRASP extends AbstractTSGRASP<Integer> {
 
     private final RideSharingEvaluator rideSharingEvaluator;
 
-    public RideSharingGRASP(Double alpha, Integer iterations, Duration maxExecutionTime, RideSharingEvaluator rideSharingEvaluator) throws IOException {
-        super(rideSharingEvaluator, alpha, iterations, maxExecutionTime);
+    private final Integer fakeTLElem = new Integer(-1);
+
+    public RideSharingTSGRASP(Double alpha, Integer iterations, Duration maxExecutionTime, RideSharingEvaluator rideSharingEvaluator, Integer tenure) throws IOException {
+        super(rideSharingEvaluator, alpha, iterations, maxExecutionTime, tenure);
         this.rideSharingEvaluator = rideSharingEvaluator;
     }
 
@@ -28,6 +31,18 @@ public class RideSharingGRASP extends AbstractGRASP<Integer> {
     public ArrayList<Integer> makeRCL() {
         return new ArrayList<>();
     }
+
+	@Override
+	public ArrayDeque<Integer> makeTL() {
+        Integer size = 2 * tenure;
+
+        ArrayDeque<Integer> aux = new ArrayDeque<Integer>(size);
+		for (int i = 0; i < size; i++) {
+			aux.add(fakeTLElem);
+		}
+
+		return aux;
+	}
 
     @Override
     public void updateCL() {
@@ -52,10 +67,18 @@ public class RideSharingGRASP extends AbstractGRASP<Integer> {
     }
 
     @Override
-    public Solution<Integer> localSearch(LocalSearchMethod localSearchMethod) {
-    	return LocalSearchMethod.FIRST_IMPROVING.equals(localSearchMethod) 
-            ? localSearchFirstImproving() 
-            : localSearchBestImproving();
+    public Solution<Integer> localSearch(LocalSearchMethod method) {
+    	switch (method) {
+			case FIRST_IMPROVING:
+				return localSearchFirstImproving();
+			case BEST_IMPROVING:
+				return localSearchBestImproving();
+			case TABU_SEARCH:
+				return tabuSearch();
+			default:
+				System.out.println("Method not implemented");
+				return sol;
+		}
     }
 
     private Solution<Integer> localSearchFirstImproving() {
@@ -173,6 +196,80 @@ public class RideSharingGRASP extends AbstractGRASP<Integer> {
                     sol.add(bestCandIn);
                     CL.remove(bestCandIn);
                 }
+                rideSharingEvaluator.evaluate(sol);
+            }
+
+        } while (minDeltaCost < -Double.MIN_VALUE);
+
+        return sol;
+    }
+    
+    private Solution<Integer> tabuSearch() {
+    	Double minDeltaCost;
+		Integer bestCandIn = null, bestCandOut = null;
+
+		do {
+			minDeltaCost = Double.POSITIVE_INFINITY;
+			updateCL();
+
+            // Evaluate insertions
+			for (Integer candIn : CL) {
+				if (!TL.contains(candIn)) {
+                    double deltaCost = rideSharingEvaluator.evaluateInsertionCost(candIn, sol);
+                    if (deltaCost < minDeltaCost) {
+                        minDeltaCost = deltaCost;
+                        bestCandIn = candIn;
+                        bestCandOut = null;
+                    }
+                }
+			}
+
+            // Evaluate removals
+            for (Integer candOut : sol) {
+                if (!TL.contains(candOut)) {
+                    double deltaCost = rideSharingEvaluator.evaluateRemovalCost(candOut, sol);
+                    if (deltaCost < minDeltaCost) {
+                        minDeltaCost = deltaCost;
+                        bestCandIn = null;
+                        bestCandOut = candOut;
+                    }
+                }
+            }
+
+            // Evaluate exchanges
+            for (Integer candIn : CL) {
+                for (Integer candOut : sol) {
+                    if (!TL.contains(candIn) && !TL.contains(candOut)) {
+                        double deltaCost = rideSharingEvaluator.evaluateExchangeCost(candIn, candOut, sol);
+                        if (deltaCost < minDeltaCost) {
+                            minDeltaCost = deltaCost;
+                            bestCandIn = candIn;
+                            bestCandOut = candOut;
+                        }
+                    }
+                }
+            }
+
+            // Implement the best move, if it reduces the solution cost.
+            if (minDeltaCost < -Double.MIN_VALUE) {  
+                TL.poll();
+                if (bestCandOut != null) {
+                    sol.remove(bestCandOut);
+                    CL.add(bestCandOut);
+                    TL.add(bestCandOut);
+                } else {
+                    TL.add(fakeTLElem);
+                }
+
+                TL.poll();
+                if (bestCandIn != null) {
+                    sol.add(bestCandIn);
+                    CL.remove(bestCandIn);
+                    TL.add(bestCandIn);
+                } else {
+                    TL.add(fakeTLElem);
+                }
+
                 rideSharingEvaluator.evaluate(sol);
             }
 

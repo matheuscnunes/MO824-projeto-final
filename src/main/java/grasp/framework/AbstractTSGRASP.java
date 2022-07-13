@@ -15,7 +15,7 @@ import java.util.*;
  * @param <E>
  *            Generic type of the element which composes the solution.
  */
-public abstract class AbstractGRASP<E> {
+public abstract class AbstractTSGRASP<E> {
 
 	/**
 	 * flag that indicates whether the code should print more information on
@@ -47,6 +47,11 @@ public abstract class AbstractGRASP<E> {
 	 * array of alphas when Reactive GRASP applied
 	 */
 	protected double[] alphas;
+
+    /**
+	 * the tabu tenure.
+	 */
+	protected Integer tenure;
 
 	/**
 	 * the best (incumbent) solution cost
@@ -83,6 +88,11 @@ public abstract class AbstractGRASP<E> {
 	 */
 	protected ArrayList<E> RCL;
 
+    /**
+	 * the Tabu List of elements to enter the solution.
+	 */
+	protected ArrayDeque<E> TL;
+
 	/**
 	 * the max time to run the solver in seconds
 	 */
@@ -105,6 +115,15 @@ public abstract class AbstractGRASP<E> {
 	 * @return The Restricted Candidate List.
 	 */
 	public abstract ArrayList<E> makeRCL();
+
+    /**
+	 * Creates the Tabu List, which is an ArrayDeque of the Tabu
+	 * candidate elements. The number of iterations a candidate
+	 * is considered tabu is given by the Tabu Tenure {@link #tenure}
+	 * 
+	 * @return The Tabu List.
+	 */
+	public abstract ArrayDeque<E> makeTL();
 
 	/**
 	 * Updates the Candidate List according to the current solution
@@ -141,11 +160,12 @@ public abstract class AbstractGRASP<E> {
 	 * @param iterations
 	 *            The number of iterations which the GRASP will be executed.
 	 */
-	public AbstractGRASP(Evaluator<E> evaluator, Double usedAlpha, Integer iterations, Duration maxExecutionTime) {
+	public AbstractTSGRASP(Evaluator<E> evaluator, Double usedAlpha, Integer iterations, Duration maxExecutionTime, Integer tenure) {
 		this.evaluator = evaluator;
 		this.usedAlpha = usedAlpha;
 		this.iterations = iterations;
 		this.maxExecutionTime = maxExecutionTime;
+		this.tenure = tenure;
 	}
 	
 	/**
@@ -309,10 +329,13 @@ public abstract class AbstractGRASP<E> {
 		Instant started = Instant.now();
 		bestSol = createEmptySol();
 		alphas = getAlphasForBestReactive();
-		for (int i = 0; i < iterations; i++) {
+        TL = makeTL();
+
+        for (int i = 0; i < iterations; i++) {
 			if (ConstructiveMethod.RANDOM_PLUS_GREEDY.equals(constructiveMethod)) {
 				args[1] = String.valueOf(i);
 			}
+
 			constructiveHeuristic(constructiveMethod, args);
 			localSearch(localSearchMethod);
 
@@ -355,7 +378,7 @@ public abstract class AbstractGRASP<E> {
 	}
 
     public enum LocalSearchMethod {
-		FIRST_IMPROVING, BEST_IMPROVING
+		FIRST_IMPROVING, BEST_IMPROVING, TABU_SEARCH
 	}
 
 }

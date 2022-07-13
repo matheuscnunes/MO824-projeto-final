@@ -1,6 +1,6 @@
 package grasp.problem.ridesharing;
 
-import grasp.framework.AbstractGRASP;
+import grasp.framework.AbstractTSGRASP;
 import grasp.framework.Solution;
 
 import java.io.IOException;
@@ -14,8 +14,8 @@ public class RideSharingMain {
         double alpha = 0.25;
         int iterations = 100;
         
-        AbstractGRASP.ConstructiveMethod constructiveMethod = AbstractGRASP.ConstructiveMethod.STANDARD;
-        AbstractGRASP.LocalSearchMethod localSearchMethod = AbstractGRASP.LocalSearchMethod.FIRST_IMPROVING;
+        AbstractTSGRASP.ConstructiveMethod constructiveMethod = AbstractTSGRASP.ConstructiveMethod.STANDARD;
+        AbstractTSGRASP.LocalSearchMethod localSearchMethod = AbstractTSGRASP.LocalSearchMethod.FIRST_IMPROVING;
 
         System.out.println("------ Running RideSharingGRASP ------" +
                 "\ninstance = " + instance +
@@ -25,9 +25,9 @@ public class RideSharingMain {
                 "\niterations = " + iterations);
 
         RideSharingEvaluator evaluator = new RideSharingEvaluator(instance);
-        RideSharingGRASP rideSharingGRASP = new RideSharingGRASP(alpha, iterations, maxExecutionTime, evaluator);
+        RideSharingTSGRASP rideSharingTSGRASP = new RideSharingTSGRASP(alpha, iterations, maxExecutionTime, evaluator, 1);
 
-        Solution<Integer> solution = rideSharingGRASP.solve(constructiveMethod, localSearchMethod);
+        Solution<Integer> solution = rideSharingTSGRASP.solve(constructiveMethod, localSearchMethod);
         System.out.println("Found solution: " + solution);
     }
 }
