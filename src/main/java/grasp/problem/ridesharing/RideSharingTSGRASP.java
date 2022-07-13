@@ -5,10 +5,7 @@ import grasp.framework.Solution;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -87,6 +84,8 @@ public class RideSharingTSGRASP extends AbstractTSGRASP<Integer> {
 				return localSearchBestImproving();
 			case TABU_SEARCH:
 				return tabuSearch();
+            case TABU_PROBABILISTIC_50_PERCENT:
+                return tabuSearch(0.5);
 			default:
 				System.out.println("Method not implemented");
 				return sol;
@@ -215,8 +214,12 @@ public class RideSharingTSGRASP extends AbstractTSGRASP<Integer> {
 
         return sol;
     }
-    
+
     private Solution<Integer> tabuSearch() {
+        return tabuSearch(1.0);
+    }
+
+    private Solution<Integer> tabuSearch(Double percentage) {
     	Double minDeltaCost;
 		Integer bestCandIn = null, bestCandOut = null;
 
@@ -226,7 +229,7 @@ public class RideSharingTSGRASP extends AbstractTSGRASP<Integer> {
 
             // Evaluate insertions
 			for (Integer candIn : CL) {
-				if (!TL.contains(candIn)) {
+				if (rng.nextDouble() < percentage && !TL.contains(candIn)) {
                     double deltaCost = rideSharingEvaluator.evaluateInsertionCost(candIn, sol);
                     if (deltaCost < minDeltaCost) {
                         minDeltaCost = deltaCost;
@@ -238,7 +241,7 @@ public class RideSharingTSGRASP extends AbstractTSGRASP<Integer> {
 
             // Evaluate removals
             for (Integer candOut : sol) {
-                if (!TL.contains(candOut)) {
+                if (rng.nextDouble() < percentage && !TL.contains(candOut)) {
                     double deltaCost = rideSharingEvaluator.evaluateRemovalCost(candOut, sol);
                     if (deltaCost < minDeltaCost) {
                         minDeltaCost = deltaCost;
@@ -251,7 +254,7 @@ public class RideSharingTSGRASP extends AbstractTSGRASP<Integer> {
             // Evaluate exchanges
             for (Integer candIn : CL) {
                 for (Integer candOut : sol) {
-                    if (!TL.contains(candIn) && !TL.contains(candOut)) {
+                    if (rng.nextDouble() < percentage && !TL.contains(candIn) && !TL.contains(candOut)) {
                         double deltaCost = rideSharingEvaluator.evaluateExchangeCost(candIn, candOut, sol);
                         if (deltaCost < minDeltaCost) {
                             minDeltaCost = deltaCost;

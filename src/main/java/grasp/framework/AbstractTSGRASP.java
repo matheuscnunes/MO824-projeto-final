@@ -26,7 +26,7 @@ public abstract class AbstractTSGRASP<E> {
 	/**
 	 * a random number generator
 	 */
-	static Random rng = new Random(0);
+	protected static Random rng = new Random(0);
 
 	/**
 	 * a random number generator for alpha's in Reactive GRASP
@@ -381,7 +381,7 @@ public abstract class AbstractTSGRASP<E> {
 	}
 
     public enum LocalSearchMethod {
-		FIRST_IMPROVING, BEST_IMPROVING, TABU_SEARCH
+		FIRST_IMPROVING, BEST_IMPROVING, TABU_SEARCH, TABU_PROBABILISTIC_50_PERCENT
 	}
 
 }

@@ -5,7 +5,7 @@ import grasp.framework.Solution;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
+import java.time.Instant;
 
 public class RideSharingMain {
 
@@ -16,7 +16,7 @@ public class RideSharingMain {
         int iterations = 100;
         
         AbstractTSGRASP.ConstructiveMethod constructiveMethod = AbstractTSGRASP.ConstructiveMethod.STANDARD;
-        AbstractTSGRASP.LocalSearchMethod localSearchMethod = AbstractTSGRASP.LocalSearchMethod.FIRST_IMPROVING;
+        AbstractTSGRASP.LocalSearchMethod localSearchMethod = AbstractTSGRASP.LocalSearchMethod.TABU_SEARCH;
 
         System.out.println("------ Running RideSharingGRASP ------" +
                 "\ninstance = " + instance +
@@ -27,10 +27,12 @@ public class RideSharingMain {
                 "\niterations = " + iterations);
 
         RideSharingEvaluator evaluator = new RideSharingEvaluator(instance);
-        RideSharingTSGRASP rideSharingTSGRASP = new RideSharingTSGRASP(alpha, iterations, maxExecutionTime, evaluator, 1);
+        RideSharingTSGRASP rideSharingTSGRASP = new RideSharingTSGRASP(alpha, iterations, maxExecutionTime, evaluator, 10);
 
+        Instant started = Instant.now();
         Solution<Integer> solution = rideSharingTSGRASP.solve(constructiveMethod, localSearchMethod);
+        Instant ended = Instant.now();
         evaluator.evaluate(solution);
-        System.out.println("Found solution: " + solution + "\nRiders distribution: " + evaluator.driverServingRidersVariable);
+        System.out.println("Solution: " + solution + "\nTime took: " + (ended.toEpochMilli() - started.toEpochMilli()) + "ms\nRiders distribution: " + evaluator.driverServingRidersVariable);
     }
 }
