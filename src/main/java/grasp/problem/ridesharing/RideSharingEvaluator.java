@@ -21,7 +21,7 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
      * Problem generic variables
      */
     public Integer domainSize;
-    public final List<List<Integer>> driverServingRidersVariable;
+    public List<List<Integer>> driverServingRidersVariable;
 
     /**
      * Riders related variables
@@ -70,6 +70,8 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
             driversDecisionVariables.get(driver).set(rider, 1);
         }
 
+        driverServingRidersVariable = driversDecisionVariables;
+
         List<List<NodeCoord>> allRoutes = new ArrayList<>();
         for (int i = 0; i < driversDecisionVariables.size(); i++) {
             List<Integer> driverRiders = driversDecisionVariables.get(i);
@@ -98,32 +100,37 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
             }
         }
 
-        return rideCosts + penaltyCost;
+        double cost = rideCosts + penaltyCost;
+        sol.cost = cost;
+        return cost;
     }
 
     @Override
     public Double evaluateInsertionCost(Integer elem, Solution<Integer> sol) {
+        Double currentCost = evaluate(sol);
         Solution<Integer> newSol = new Solution<>(sol);
         newSol.add(elem);
 
-        return evaluate(newSol);
+        return evaluate(newSol) - currentCost;
     }
 
     @Override
     public Double evaluateRemovalCost(Integer elem, Solution<Integer> sol) {
+        Double currentCost = evaluate(sol);
         Solution<Integer> newSol = new Solution<>(sol);
         newSol.remove(elem);
 
-        return evaluate(newSol);
+        return evaluate(newSol) - currentCost;
     }
 
     @Override
     public Double evaluateExchangeCost(Integer elemIn, Integer elemOut, Solution<Integer> sol) {
+        Double currentCost = evaluate(sol);
         Solution<Integer> newSol = new Solution<>(sol);
         newSol.remove(elemOut);
         newSol.add(elemIn);
 
-        return evaluate(newSol);
+        return evaluate(newSol) - currentCost;
     }
 
     private void readInput(Instance instance) {

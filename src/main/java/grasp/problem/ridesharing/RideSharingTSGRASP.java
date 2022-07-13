@@ -47,9 +47,9 @@ public class RideSharingTSGRASP extends AbstractTSGRASP<Integer> {
     @Override
     public void updateCL() {
         Set<Integer> candidates = makeCL();
+        int allCandidatesSize = candidates.size();
         for (Integer solCandidate : sol) {
             int rider = solCandidate % rideSharingEvaluator.riders;
-            int allCandidatesSize = candidates.size();
             for (int r = rider; r < allCandidatesSize; r = r + rideSharingEvaluator.riders) {
                 candidates.remove(r);
             }
