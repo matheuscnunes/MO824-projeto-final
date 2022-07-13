@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -47,10 +48,21 @@ public class RideSharingTSGRASP extends AbstractTSGRASP<Integer> {
     @Override
     public void updateCL() {
         Set<Integer> candidates = makeCL();
-        int allCandidatesSize = candidates.size();
+        List<List<Integer>> ridersPerDriverLists = rideSharingEvaluator.getRidersPerDriverLists(sol);
+
+        // If driver is overloaded with the max requests, remove it all the riders possibilities for it
+        for (int driverIndex = 0; driverIndex < ridersPerDriverLists.size(); driverIndex++) {
+            if (ridersPerDriverLists.get(driverIndex).stream().filter(value -> value == 1).count() >= rideSharingEvaluator.maxRequests) {
+                for (int d = rideSharingEvaluator.riders * driverIndex; d < (rideSharingEvaluator.riders * driverIndex) + rideSharingEvaluator.riders; d++) {
+                    candidates.remove(d);
+                }
+            }
+        }
+
+        // Remove the selected rider from all the other drivers possibilities
         for (Integer solCandidate : sol) {
             int rider = solCandidate % rideSharingEvaluator.riders;
-            for (int r = rider; r < allCandidatesSize; r = r + rideSharingEvaluator.riders) {
+            for (int r = rider; r < rideSharingEvaluator.getDomainSize(); r = r + rideSharingEvaluator.riders) {
                 candidates.remove(r);
             }
         }

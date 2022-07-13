@@ -12,7 +12,7 @@ public class RideSharingMain {
     public static void main(String[] args) throws IOException {
         Duration maxExecutionTime = Duration.ofMinutes(5);
         Instance instance = Instance.P_N16;
-        double alpha = 0.15;
+        double alpha = 0.40;
         int iterations = 100;
         
         AbstractTSGRASP.ConstructiveMethod constructiveMethod = AbstractTSGRASP.ConstructiveMethod.STANDARD;
@@ -21,6 +21,7 @@ public class RideSharingMain {
         System.out.println("------ Running RideSharingGRASP ------" +
                 "\ninstance = " + instance +
                 "\nconstructiveMethod = " + constructiveMethod +
+                "\nlocalSearchMethod = " + localSearchMethod +
                 "\nmaxExecutionTime = " + maxExecutionTime +
                 "\nalpha = " + alpha +
                 "\niterations = " + iterations);

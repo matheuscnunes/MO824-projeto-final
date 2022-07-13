@@ -58,23 +58,12 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
     public Double evaluate(Solution<Integer> sol) {
         int penaltiesNeeded = riders - sol.size();
         double penaltyCost = penaltiesNeeded * penalty;
-        List<List<Integer>> driversDecisionVariables = new ArrayList<>();
-        IntStream.range(0, drivers).forEach(ign -> {
-            driversDecisionVariables.add(new ArrayList<>(Collections.nCopies(riders, 0))); // Drivers start not serving any riders
-        });
+        driverServingRidersVariable = getRidersPerDriverLists(sol);
 
         int rideCosts = 0;
-        for (Integer item : sol) {
-            int rider = item % riders;
-            int driver = item / riders;
-            driversDecisionVariables.get(driver).set(rider, 1);
-        }
-
-        driverServingRidersVariable = driversDecisionVariables;
-
         List<List<NodeCoord>> allRoutes = new ArrayList<>();
-        for (int i = 0; i < driversDecisionVariables.size(); i++) {
-            List<Integer> driverRiders = driversDecisionVariables.get(i);
+        for (int i = 0; i < driverServingRidersVariable.size(); i++) {
+            List<Integer> driverRiders = driverServingRidersVariable.get(i);
             List<NodeCoord> driverRoute = new ArrayList<>();
             List<NodeCoord> driverRouteDestinations = new ArrayList<>();
 
@@ -103,6 +92,21 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
         double cost = rideCosts + penaltyCost;
         sol.cost = cost;
         return cost;
+    }
+
+    public List<List<Integer>> getRidersPerDriverLists(Solution<Integer> sol) {
+        List<List<Integer>> driversDecisionVariables = new ArrayList<>();
+        IntStream.range(0, drivers).forEach(ign -> {
+            driversDecisionVariables.add(new ArrayList<>(Collections.nCopies(riders, 0))); // Drivers start not serving any riders
+        });
+
+        for (Integer item : sol) {
+            int rider = item % riders;
+            int driver = item / riders;
+            driversDecisionVariables.get(driver).set(rider, 1);
+        }
+
+        return driversDecisionVariables;
     }
 
     @Override
