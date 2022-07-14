@@ -38,7 +38,6 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
     public final List<NodeCoord> driversDestinationCoords = new ArrayList<>();
     public int maxRequests;
     public int maxDrivingTime;
-    public int maxCapacity;
     public double penalty;
 
     public RideSharingEvaluator(Instance instance) {
@@ -158,6 +157,9 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
                 case A_N32:
                     read32(allCoords);
                     break;
+                case A_N44:
+                    read44(allCoords);
+                    break;
                 default:
                     throw new RuntimeException("INSTANCE INPUT NOT IMPLEMENTED YET FOR " + instance);
             }
@@ -170,7 +172,6 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
             System.out.println("Riders Destination Coords: " + ridersDestinationCoords);
 
             System.out.println("Drivers: " + drivers);
-            System.out.println("Max Capacity: " + maxCapacity);
             System.out.println("Max Driving Time: " + maxDrivingTime);
             System.out.println("Max Requests Per Driver: " + maxRequests);
             System.out.println("Drivers Origin Coords: " + driversOriginCoords);
@@ -183,7 +184,6 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
     private void read16(List<NodeCoord> allCoords) {
         drivers = 3;
         riders = 5;
-        maxCapacity = 4;
         maxRequests = 4;
         maxDrivingTime = 110;
         penalty = 100.0;
@@ -221,7 +221,6 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
     private void read32(List<NodeCoord> allCoords) {
         drivers = 5;
         riders = 17;
-        maxCapacity = 4;
         maxRequests = 4;
         maxDrivingTime = 110;
         penalty = 100.0;
@@ -265,7 +264,64 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
         driversDestinationCoords.addAll(new ArrayList<>(Collections.nCopies(drivers, commonDestination)));
     }
 
+    private void read44(List<NodeCoord> allCoords) {
+        drivers = 6;
+        riders = 24;
+        maxRequests = 4;
+        maxDrivingTime = 110;
+        penalty = 100.0;
 
+        domainSize = drivers * riders;
+        loadDriverAndRiderCoordsFor44(allCoords);
+
+        IntStream.range(0, drivers).forEach(ign ->
+            driverServingRidersVariable.add(new ArrayList<>(Collections.nCopies(riders, 0))) // Drivers start not serving any riders
+        );
+    }
+
+    private void loadDriverAndRiderCoordsFor44(List<NodeCoord> allCoords) {
+        NodeCoord commonDestination = allCoords.get(43);
+
+        ridersOriginCoords.add(allCoords.get(31));
+        ridersOriginCoords.add(allCoords.get(8));
+        ridersOriginCoords.add(allCoords.get(15));
+        ridersOriginCoords.add(allCoords.get(19));
+        
+        ridersOriginCoords.add(allCoords.get(35));
+        ridersOriginCoords.add(allCoords.get(30));
+        ridersOriginCoords.add(allCoords.get(23));
+        ridersOriginCoords.add(allCoords.get(40));
+
+        ridersOriginCoords.add(allCoords.get(41));
+        ridersOriginCoords.add(allCoords.get(14));
+        ridersOriginCoords.add(allCoords.get(38));
+        ridersOriginCoords.add(allCoords.get(9));
+
+        ridersOriginCoords.add(allCoords.get(6));
+        ridersOriginCoords.add(allCoords.get(22));
+        ridersOriginCoords.add(allCoords.get(36));
+        ridersOriginCoords.add(allCoords.get(29));
+
+        ridersOriginCoords.add(allCoords.get(34));
+        ridersOriginCoords.add(allCoords.get(17));
+        ridersOriginCoords.add(allCoords.get(12));
+        ridersOriginCoords.add(allCoords.get(25));
+
+        ridersOriginCoords.add(allCoords.get(24));
+        ridersOriginCoords.add(allCoords.get(33));
+        ridersOriginCoords.add(allCoords.get(26));
+        ridersOriginCoords.add(allCoords.get(39));
+
+        driversOriginCoords.add(allCoords.get(0));
+        driversOriginCoords.add(allCoords.get(1));
+        driversOriginCoords.add(allCoords.get(2));
+        driversOriginCoords.add(allCoords.get(3));
+        driversOriginCoords.add(allCoords.get(4));
+        driversOriginCoords.add(allCoords.get(5));
+
+        ridersDestinationCoords.addAll(new ArrayList<>(Collections.nCopies(riders, commonDestination)));
+        driversDestinationCoords.addAll(new ArrayList<>(Collections.nCopies(drivers, commonDestination)));
+    }
 
     private int getDimensionSize(List<String> allLines) {
         return Integer.parseInt(allLines.get(3).substring(DIMENSION_OFFSET));
