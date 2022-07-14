@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class RideSharingEvaluator  implements Evaluator<Integer> {
@@ -197,6 +198,14 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
     }
 
     private void loadDriverAndRiderCoordsFor16(List<NodeCoord> allCoords) {
+        driversOriginCoords.add(allCoords.get(0));
+        driversOriginCoords.add(allCoords.get(1));
+        driversOriginCoords.add(allCoords.get(2));
+
+        driversDestinationCoords.add(allCoords.get(3));
+        driversDestinationCoords.add(allCoords.get(4));
+        driversDestinationCoords.add(allCoords.get(5));
+
         ridersOriginCoords.add(allCoords.get(6));
         ridersOriginCoords.add(allCoords.get(7));
         ridersOriginCoords.add(allCoords.get(8));
@@ -208,19 +217,11 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
         ridersDestinationCoords.add(allCoords.get(13));
         ridersDestinationCoords.add(allCoords.get(14));
         ridersDestinationCoords.add(allCoords.get(15));
-
-        driversOriginCoords.add(allCoords.get(0));
-        driversOriginCoords.add(allCoords.get(1));
-        driversOriginCoords.add(allCoords.get(2));
-
-        driversDestinationCoords.add(allCoords.get(3));
-        driversDestinationCoords.add(allCoords.get(4));
-        driversDestinationCoords.add(allCoords.get(5));
     }
 
     private void read32(List<NodeCoord> allCoords) {
         drivers = 5;
-        riders = 17;
+        riders = 26;
         maxRequests = 4;
         maxDrivingTime = 110;
         penalty = 100.0;
@@ -236,29 +237,43 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
     private void loadDriverAndRiderCoordsFor32(List<NodeCoord> allCoords) {
         NodeCoord commonDestination = allCoords.get(31);
 
-        ridersOriginCoords.add(allCoords.get(27));
-        ridersOriginCoords.add(allCoords.get(24));
-        ridersOriginCoords.add(allCoords.get(14));
-        ridersOriginCoords.add(allCoords.get(7));
-        ridersOriginCoords.add(allCoords.get(12));
-        ridersOriginCoords.add(allCoords.get(30));
-        ridersOriginCoords.add(allCoords.get(26));
-        ridersOriginCoords.add(allCoords.get(16));
-        ridersOriginCoords.add(allCoords.get(23));
-        ridersOriginCoords.add(allCoords.get(28));
-        ridersOriginCoords.add(allCoords.get(17));
-        ridersOriginCoords.add(allCoords.get(19));
-        ridersOriginCoords.add(allCoords.get(6));
-        ridersOriginCoords.add(allCoords.get(13));
-        ridersOriginCoords.add(allCoords.get(21));
-        ridersOriginCoords.add(allCoords.get(8));
-        ridersOriginCoords.add(allCoords.get(18));
-
         driversOriginCoords.add(allCoords.get(0));
         driversOriginCoords.add(allCoords.get(1));
         driversOriginCoords.add(allCoords.get(2));
         driversOriginCoords.add(allCoords.get(3));
         driversOriginCoords.add(allCoords.get(4));
+
+        ridersOriginCoords.add(allCoords.get(5));
+        ridersOriginCoords.add(allCoords.get(6));
+        ridersOriginCoords.add(allCoords.get(7));
+        ridersOriginCoords.add(allCoords.get(8));
+        ridersOriginCoords.add(allCoords.get(9));
+
+        ridersOriginCoords.add(allCoords.get(10));
+        ridersOriginCoords.add(allCoords.get(11));
+        ridersOriginCoords.add(allCoords.get(12));
+        ridersOriginCoords.add(allCoords.get(13));
+        ridersOriginCoords.add(allCoords.get(14));
+
+        ridersOriginCoords.add(allCoords.get(15));
+        ridersOriginCoords.add(allCoords.get(16));
+        ridersOriginCoords.add(allCoords.get(17));
+        ridersOriginCoords.add(allCoords.get(18));
+        ridersOriginCoords.add(allCoords.get(19));
+
+        ridersOriginCoords.add(allCoords.get(20));
+        ridersOriginCoords.add(allCoords.get(21));
+        ridersOriginCoords.add(allCoords.get(22));
+        ridersOriginCoords.add(allCoords.get(23));
+        ridersOriginCoords.add(allCoords.get(24));
+
+        ridersOriginCoords.add(allCoords.get(25));
+        ridersOriginCoords.add(allCoords.get(26));
+        ridersOriginCoords.add(allCoords.get(27));
+        ridersOriginCoords.add(allCoords.get(28));
+        ridersOriginCoords.add(allCoords.get(29));
+
+        ridersOriginCoords.add(allCoords.get(30));
 
         ridersDestinationCoords.addAll(new ArrayList<>(Collections.nCopies(riders, commonDestination)));
         driversDestinationCoords.addAll(new ArrayList<>(Collections.nCopies(drivers, commonDestination)));
@@ -266,7 +281,7 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
 
     private void read44(List<NodeCoord> allCoords) {
         drivers = 6;
-        riders = 24;
+        riders = 37;
         maxRequests = 4;
         maxDrivingTime = 110;
         penalty = 100.0;
@@ -282,42 +297,57 @@ public class RideSharingEvaluator  implements Evaluator<Integer> {
     private void loadDriverAndRiderCoordsFor44(List<NodeCoord> allCoords) {
         NodeCoord commonDestination = allCoords.get(43);
 
-        ridersOriginCoords.add(allCoords.get(31));
-        ridersOriginCoords.add(allCoords.get(8));
-        ridersOriginCoords.add(allCoords.get(15));
-        ridersOriginCoords.add(allCoords.get(19));
-        
-        ridersOriginCoords.add(allCoords.get(35));
-        ridersOriginCoords.add(allCoords.get(30));
-        ridersOriginCoords.add(allCoords.get(23));
-        ridersOriginCoords.add(allCoords.get(40));
-
-        ridersOriginCoords.add(allCoords.get(41));
-        ridersOriginCoords.add(allCoords.get(14));
-        ridersOriginCoords.add(allCoords.get(38));
-        ridersOriginCoords.add(allCoords.get(9));
-
-        ridersOriginCoords.add(allCoords.get(6));
-        ridersOriginCoords.add(allCoords.get(22));
-        ridersOriginCoords.add(allCoords.get(36));
-        ridersOriginCoords.add(allCoords.get(29));
-
-        ridersOriginCoords.add(allCoords.get(34));
-        ridersOriginCoords.add(allCoords.get(17));
-        ridersOriginCoords.add(allCoords.get(12));
-        ridersOriginCoords.add(allCoords.get(25));
-
-        ridersOriginCoords.add(allCoords.get(24));
-        ridersOriginCoords.add(allCoords.get(33));
-        ridersOriginCoords.add(allCoords.get(26));
-        ridersOriginCoords.add(allCoords.get(39));
-
         driversOriginCoords.add(allCoords.get(0));
         driversOriginCoords.add(allCoords.get(1));
         driversOriginCoords.add(allCoords.get(2));
         driversOriginCoords.add(allCoords.get(3));
         driversOriginCoords.add(allCoords.get(4));
         driversOriginCoords.add(allCoords.get(5));
+
+        ridersOriginCoords.add(allCoords.get(6));
+        ridersOriginCoords.add(allCoords.get(7));
+        ridersOriginCoords.add(allCoords.get(8));
+        ridersOriginCoords.add(allCoords.get(9));
+        ridersOriginCoords.add(allCoords.get(10));
+
+        ridersOriginCoords.add(allCoords.get(11));
+        ridersOriginCoords.add(allCoords.get(12));
+        ridersOriginCoords.add(allCoords.get(13));
+        ridersOriginCoords.add(allCoords.get(14));
+        ridersOriginCoords.add(allCoords.get(15));
+
+        ridersOriginCoords.add(allCoords.get(16));
+        ridersOriginCoords.add(allCoords.get(17));
+        ridersOriginCoords.add(allCoords.get(18));
+        ridersOriginCoords.add(allCoords.get(19));
+        ridersOriginCoords.add(allCoords.get(20));
+
+        ridersOriginCoords.add(allCoords.get(21));
+        ridersOriginCoords.add(allCoords.get(22));
+        ridersOriginCoords.add(allCoords.get(23));
+        ridersOriginCoords.add(allCoords.get(24));
+        ridersOriginCoords.add(allCoords.get(25));
+
+        ridersOriginCoords.add(allCoords.get(26));
+        ridersOriginCoords.add(allCoords.get(27));
+        ridersOriginCoords.add(allCoords.get(28));
+        ridersOriginCoords.add(allCoords.get(29));
+        ridersOriginCoords.add(allCoords.get(30));
+
+        ridersOriginCoords.add(allCoords.get(31));
+        ridersOriginCoords.add(allCoords.get(32));
+        ridersOriginCoords.add(allCoords.get(33));
+        ridersOriginCoords.add(allCoords.get(34));
+        ridersOriginCoords.add(allCoords.get(35));
+
+        ridersOriginCoords.add(allCoords.get(36));
+        ridersOriginCoords.add(allCoords.get(37));
+        ridersOriginCoords.add(allCoords.get(38));
+        ridersOriginCoords.add(allCoords.get(39));
+        ridersOriginCoords.add(allCoords.get(40));
+
+        ridersOriginCoords.add(allCoords.get(41));
+        ridersOriginCoords.add(allCoords.get(42));
 
         ridersDestinationCoords.addAll(new ArrayList<>(Collections.nCopies(riders, commonDestination)));
         driversDestinationCoords.addAll(new ArrayList<>(Collections.nCopies(drivers, commonDestination)));
