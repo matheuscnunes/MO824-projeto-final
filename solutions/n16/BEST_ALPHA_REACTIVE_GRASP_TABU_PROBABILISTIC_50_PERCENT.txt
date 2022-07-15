@@ -1,0 +1,7 @@
+Instance: P_N16; Constructive Method: BEST_ALPHA_REACTIVE_GRASP; LocalSearch Method: TABU_PROBABILISTIC_50_PERCENT
+
+D0 - [1, 1, 0, 0, 1]
+D1 - [0, 0, 0, 0, 0]
+D2 - [0, 0, 1, 1, 0]
+
+Cost: 175,0; Time took: 23ms

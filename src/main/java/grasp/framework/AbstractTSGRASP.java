@@ -332,11 +332,7 @@ public abstract class AbstractTSGRASP<E> {
         TL = makeTL();
 
         for (int i = 0; i < iterations; i++) {
-			if (ConstructiveMethod.RANDOM_PLUS_GREEDY.equals(constructiveMethod)) {
-				args[1] = String.valueOf(i);
-			}
-
-			constructiveHeuristic(constructiveMethod, args);
+            constructiveHeuristic(constructiveMethod, args);
 			localSearch(localSearchMethod);
 
 			if (bestSol.cost > sol.cost) {

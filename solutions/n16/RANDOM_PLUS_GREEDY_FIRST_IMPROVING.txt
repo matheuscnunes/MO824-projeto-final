@@ -1,0 +1,7 @@
+Instance: P_N16; Constructive Method: RANDOM_PLUS_GREEDY; LocalSearch Method: FIRST_IMPROVING
+
+D0 - [1, 1, 0, 0, 1]
+D1 - [0, 0, 0, 0, 0]
+D2 - [0, 0, 1, 1, 0]
+
+Cost: 175,0; Time took: 31ms
